@@ -4,9 +4,9 @@ This repository contains an application for controlling the LightCrafter6500 DMD
 # Acknowledgements
 This project is based on the work of [A. Mazurenko](https://github.com/mazurenko/Lightcrafter6500DMDControl). Thank you for making the code public!
 The following individuals contributed to the project:
-- [L. Fischer] (https://github.com/LFischer20)
+- [L. Fischer](https://github.com/LFischer20)
 - L. Malgrey
-- [ruben-e11] (https://github.com/ruben-e11) 
+- [ruben-e11](https://github.com/ruben-e11) 
 
 # Requirements
 The required python packages are:
