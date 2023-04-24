@@ -58,7 +58,6 @@ class LightCrafter6500():
             if not start_stop in command_list.keys():
                 raise Exception('Allowed arguments are start, stop and pause')
             self.USB_dev.create_dmd_command('w',True,0x12,0x1a24, data=[command_list[start_stop]])
-            print("Errors while %sing  the programmed sequence:" %start_stop)
             self.read_error_code(0x12)
             print("Programmed pattern sequence %s"%start_stop) 
     
@@ -87,7 +86,6 @@ class LightCrafter6500():
         mode_list = {'video':0x00,'pre-stored_pattern':0x01,'video_pattern':0x02,'pattern_on_the_fly':0x03}
         assert mode in mode_list.keys()
         self.USB_dev.create_dmd_command('w',True,0x13,0x1a1b,data=[mode_list[mode]])
-        print('Errors in the selection of the displayed mode:')
         self.read_error_code(0x13)
         print('DMD set in %s mode' %mode)
     
@@ -127,7 +125,6 @@ class LightCrafter6500():
     def display_mode_get(self):
         data = [0x00]
         self.USB_dev.create_dmd_command('r',True,0x14,0x1a1b, data)
-        print("Error while geeting display mode:")
         error_code, answer = self.read_error_code(0x14)
         mode_list = ['video', 'pre-stored_pattern', 'video_pattern', 'pattern_on_the_fly']
         self.mode = mode_list[answer[5]]
@@ -158,7 +155,6 @@ class LightCrafter6500():
         else:
             raise Exception('on_off has to be True or False')
         self.USB_dev.create_dmd_command('w',True,0x22,0x1008,[data])
-        print("Errors while setting long axis flip to %s:"%on_off)
         self.read_error_code(0x22)
         print("Long axis flip %s"%on_off)
         
@@ -187,7 +183,6 @@ class LightCrafter6500():
         else:
             raise Exception('on_off has to be True or False')
         self.USB_dev.create_dmd_command('w',True,0x23,0x1009,data=[data1])
-        print("Errors while setting short axis flip to %s:"%on_off)
         self.read_error_code(0x23)
         print("Short axis flip %s"%on_off)
         
@@ -196,7 +191,6 @@ class LightCrafter6500():
         mode_dict = {'park' : 0x01, 'unpark' : 0x00}
         assert mode in mode_dict.keys()
         self.USB_dev.create_dmd_command('w', True, 0x37, 0x069, [mode_dict[mode]])
-        print('Errors while '%mode)
         self.read_error_code(0x37)
         print("DMD  %s" %mode)
         
@@ -205,7 +199,6 @@ class LightCrafter6500():
         mode_dict = {'normal' : 0x00, 'standby' : 0x01, 'reset': 0x02}
         assert mode in mode_dict.keys()
         self.USB_dev.create_dmd_command('w', True, 0x72, 0x0200, [mode_dict[mode]])
-        print('Errors while %s'%mode)
         self.read_error_code(0x72)
         print("DMD  %s" %mode)
         
@@ -232,7 +225,6 @@ class LightCrafter6500():
         mode_dict = {'start' : 0x01, 'stop' : 0x00}
         assert mode in mode_dict.keys()
         self.USB_dev.create_dmd_command('w', True, 0x42, 0x0201, [mode_dict[mode]])
-        print('Errors while turning dmd idle mode  to %s'%mode)
         self.read_error_code(0x42)
         print("DMD idle mode %s" %mode)
         
@@ -265,7 +257,6 @@ class LightCrafter6500():
         assert image in image_dict.keys()
 
         self.USB_dev.create_dmd_command('w',True,0x20,0x1203,data=[image_dict[image]])
-        print('Errors while selecting the internal test pattern:')
         self.read_error_code(0x20)
         print("Display test pattern: %s" %image)
 
@@ -310,7 +301,6 @@ class LightCrafter6500():
         data_string = '000' + bit_depth_dict[bit_depth] + mode_dict[mode]
         data[0] = int(data_string,2)
         self.USB_dev.create_dmd_command('w',True,0x21,0x1a00,data=data)
-        print('Errors while selecting the input source to be displayed:')
         self.read_error_code(0x21)
         print("Input source is now %s" %mode)
 
@@ -350,9 +340,8 @@ class LightCrafter6500():
             rising_edge_bit = [0x00] if is_trigger_rising_edge else [0x01]
             data = trigger_delay_bytes + rising_edge_bit
             self.USB_dev.create_dmd_command('w', True, 0x43, 0x1a35, data)
-            print('Errors while setting the rising edge delay of the TRIG_IN1 signal:')
             self.read_error_code(0x43)
-        #assert trigger_delay > 104
+            print('Set the rising edge delay of the TRIG_IN1 signal:')
 
     def pattern_display_LUT_definition(self, pattern_index, wait_for_trigger, 
                                        exposure_time = 105, dark_time = 105, 
@@ -419,7 +408,7 @@ class LightCrafter6500():
             else:
                 flicker_bit = '1'
             string_for_trigger = trigger_list[trigger] + led_list[led_on_off] + bit_depth_list[bit_depth-1] + flicker_bit
-            print(string_for_trigger)
+            #print(string_for_trigger)
 
             trigger_settings_bytes = [0x01]
             trigger_settings_bytes[0] = int(string_for_trigger,2)
@@ -430,9 +419,9 @@ class LightCrafter6500():
             data = pattern_index_bytes + exposure_bytes + trigger_settings_bytes + \
                 dark_time_bytes + trig2_output_bytes + pattern_index_bytes
             self.USB_dev.create_dmd_command('w', True, 0x65, 0x1a34, data)
-            print('Errors while creating the LUT:')
             #self.read_error_code(0x65)
             #somehow this command caused problems for shor exposure times. Dont understand why
+            print('Defined LUT index=', pattern_index)
 
     def initialize_pattern_BMP_load(self, length, index = 0):
         """
@@ -460,7 +449,6 @@ class LightCrafter6500():
         data = self.int_to_hex_array(index, n_bytes=2)
         data+= self.int_to_hex_array(length,n_bytes=4)
         self.USB_dev.create_dmd_command('w',True,0x11,0x1a2a, data=data)
-        print('Errors while loading BMP pattern:')
         self.read_error_code(0x11)
 
     def pattern_display_LUT_configuration(self, number_of_patterns, number_of_repeats):
@@ -497,8 +485,8 @@ class LightCrafter6500():
             repeats_bytes = self.int_to_hex_array(number_of_repeats, n_bytes=4)
             data = patterns_bytes + repeats_bytes
             self.USB_dev.create_dmd_command('w', True, 0x0d, 0x1a31, data)
-            print('Errors while controling the execution of patterns stored in the lookup table:')
             self.read_error_code(0x0d)
+
 
     def send_image(self,image_bits):
         """
@@ -612,7 +600,6 @@ class LightCrafter6500():
 
         """
         
-        #print('Checking errors')
         timeout = 0
         error_bit = 0
         while True:
@@ -652,7 +639,6 @@ class LightCrafter6500():
                 raise DmdError(error_code)
             return error_code, data
         else:
-            print("No errors")
             return 0, data
 
     def int_to_hex_array(self, number, n_bytes = 2):

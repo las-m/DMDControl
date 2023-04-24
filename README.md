@@ -12,6 +12,7 @@ The following individuals contributed to the project:
 The required python packages are:
 * pillow
 * pywinusb
+* opencv-python
 
 # Examples
 Example scripts:
