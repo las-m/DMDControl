@@ -17,7 +17,8 @@ class DMDPattern():
         self.dark_time = kwargs.pop('dark_time', 0)
         self.bit_depth = kwargs.pop('bit_depth', 1)
         self.flicker_active = kwargs.pop('flicker_acitve', True)
-
+        self.wait_for_trigger = kwargs.pop('wait_for_trigger', False)
+        
         self.pattern = np.zeros(self.resolution)
         self.compressed_pattern = None
         self.compressed_pattern_length = None

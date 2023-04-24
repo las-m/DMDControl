@@ -13,4 +13,4 @@ pattern.exposure_time, pattern.dark_time = 105, 0
 # Show pattern forever -> number_of_repeats = 0
 Pattern_sequence = {'patterns': [pattern], 'number_of_repeats': 0}
 test = pfly.Pattern_on_the_fly()
-test.upload_image_sequence(Pattern_sequence, wait_for_trigger=False)
+test.upload_image_sequence(Pattern_sequence)

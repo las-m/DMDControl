@@ -12,7 +12,7 @@ class Pattern_on_the_fly():
     def __init__(self):
         self.lc_dmd = lc.LightCrafter6500()
     
-    def upload_image_sequence(self, dmd_pattern_sequence, wait_for_trigger=False):
+    def upload_image_sequence(self, dmd_pattern_sequence):
         """
         
         Send an image or a sequence of image to the device.
@@ -22,10 +22,7 @@ class Pattern_on_the_fly():
         dmd_pattern_sequence : TYPE: dictionnary
             DESCRIPTION: dic with the following structure:
             {'patterns': [dmd_pattern], 'number_of_repeats': number_of_repeats}
-                
-        wait_for_trigger : TYPE, optional: Bool
-            DESCRIPTION. The default is False. True if want to wait for trigger.
-
+            
         Returns
         -------
         None.
@@ -36,7 +33,9 @@ class Pattern_on_the_fly():
         self.lc_dmd.set_pattern_on_the_fly_mode()
 
         for indx, dmd_pattern in enumerate(dmd_pattern_sequence['patterns']):
-            self.lc_dmd.pattern_display_LUT_definition(indx, wait_for_trigger, dmd_pattern.exposure_time, dmd_pattern.dark_time, dmd_pattern.bit_depth, dmd_pattern.flicker_active)
+            self.lc_dmd.pattern_display_LUT_definition(
+                indx, dmd_pattern.wait_for_trigger, dmd_pattern.exposure_time,
+                dmd_pattern.dark_time, dmd_pattern.bit_depth, dmd_pattern.flicker_active)
         
         sequence_length = len(dmd_pattern_sequence['patterns'])
         number_of_repeats = dmd_pattern_sequence.pop('number_of_repeats', 0)
